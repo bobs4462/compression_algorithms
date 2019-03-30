@@ -10,12 +10,16 @@
 PATHNODE *collapse(PATHNODE root, int nodecount);
 void strreverse(char *string); //doesn't work for multibyte strings
 PATHNODE *collapse(PATHNODE root, int nodecount);
+void build_prefix_tree_hf(CODENODE *queue, int qsz);
+CODENODE build_prefix_tree_sp(CODENODE start, CODENODE end);
+extern int altm;
 #include <pthread.h>
 #endif
 
 #ifdef MAIN
 #include <locale.h>
 #include <ncurses.h>
+#define ALGORITHM_REQ "АЛГОРТМ КОДИРОВАНИЯ:"
 int show_menu(char **items, int sz, char *msg);
 void interactive(void);
 void file_io(void);

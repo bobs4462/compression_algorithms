@@ -7,7 +7,7 @@ void codify(CODETABLE table) //функция для вычисления пре
 	int qsz = table->distcharc; //size of queue below
 	int mintreedepth = 1;
 	CODEVALUE sorted[table->distcharc];
-	int min = 1, bp; //breakpoint in queue to insert new element
+	int min = 1;//breakpoint in queue to insert new element
 
 	for (int i = 0; i < qsz; ) {
 		for (int j = 0; j < qsz; ++j)
@@ -29,8 +29,11 @@ void codify(CODETABLE table) //функция для вычисления пре
 		queue[i] = &baseline[i];	
 	}
 	//TODO figure out wether to use to two queues or two separate tables
-	build_prefix_tree_sp(queue[0], queue[qsz - 1]);
-	build_prefix_tree_hf(queue, qsz);
+	
+	if (altm) 
+		build_prefix_tree_sp(queue[0], queue[qsz - 1]);
+	else
+		build_prefix_tree_hf(queue, qsz);
 
 	char t[100] = {0};
 	for (int i = 0, j = 0; i < table->distcharc; ++i) {
@@ -60,6 +63,7 @@ void codify(CODETABLE table) //функция для вычисления пре
 
 void build_prefix_tree_hf(CODENODE *queue, int qsz)
 {
+	int bp = 0;
 	CODENODE temp;
 	while (qsz > 1) {
 		temp = malloc(sizeof(struct codenode));	
@@ -94,6 +98,7 @@ CODENODE build_prefix_tree_sp(CODENODE start, CODENODE end)
 		totalr += tracer->weight;
 		tracer = tracer->next;
 	}
+	totalr += end->weight;
 	tracer = start;
 	acc += tracer->weight;
 	totalr -= tracer->weight;
@@ -108,9 +113,10 @@ CODENODE build_prefix_tree_sp(CODENODE start, CODENODE end)
 		delta_min = delta_min > delta_cur ? delta_cur : delta_min;
 	}
 	
- 	root = malloc(sizeof(struct CODENODE));
+ 	root = malloc(sizeof(struct codenode));
+	root->parent = NULL;
 	zero = build_prefix_tree_sp(start, old_tracer);
-	one = build_prefix_tree_sp(old_tracer, end);
+	one = build_prefix_tree_sp(old_tracer->next, end);
 	one->parent = zero->parent = root;
 	one->dirctn = '1';
 	zero->dirctn = '0';
