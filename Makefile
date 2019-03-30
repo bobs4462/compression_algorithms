@@ -7,7 +7,7 @@ INCLUDES := prefix.h
 encode: -lmenu -lform -lpanel -lncursesw -lpthread $(OBJ) 
 	gcc $^ -o $@  -g
 	./$@
-	rm -f $(OBJ) $@
+#	rm -f $(OBJ) $@
 	clear	
 
 $(OBJ): $(INCLUDES)
