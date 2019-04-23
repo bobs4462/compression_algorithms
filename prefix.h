@@ -14,6 +14,7 @@ void build_prefix_tree_hf(CODENODE *queue, int qsz);
 CODENODE build_prefix_tree_sp(CODENODE start, CODENODE end);
 extern int altm;
 #include <pthread.h>
+#include <time.h>
 #endif
 
 #ifdef MAIN
@@ -27,8 +28,8 @@ void file_io(void);
 
 #ifdef GUI
 #include <menu.h>
-#include <time.h>
 #include <form.h>
+#include <time.h>
 #include <panel.h>
 char *get_fixed(char *string, int fixedcount);
 #endif

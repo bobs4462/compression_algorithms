@@ -21,7 +21,7 @@ int verify (char *code, int controls, int codelen)
 			}
 		} 
 		if (controlled % 2) {
-			error = 1;
+			error += 1;
 			error_position += p;
 			printf("ERROR POSTION %d\n", p);
 		}

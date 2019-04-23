@@ -1,6 +1,7 @@
 #define CODIFY
 #define MOD(X) X < 0 ? X * (-1) : X
 #include <prefix.h>
+double time_taken = 0;
 
 void codify(CODETABLE table) //функция для вычисления префикс кодов
 {
@@ -30,10 +31,14 @@ void codify(CODETABLE table) //функция для вычисления пре
 	}
 	//TODO figure out wether to use to two queues or two separate tables
 	
+	clock_t start = clock();
 	if (altm) 
 		build_prefix_tree_sp(queue[0], queue[qsz - 1]);
 	else
 		build_prefix_tree_hf(queue, qsz);
+	clock_t end = clock();
+	time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+
 
 	char t[100] = {0};
 	for (int i = 0, j = 0; i < table->distcharc; ++i) {

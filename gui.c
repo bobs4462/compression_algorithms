@@ -1,6 +1,7 @@
 #define GUI
 #include <prefix.h>
 #include <errno.h>
+extern double time_taken;
 
 extern int thr_done;
 wchar_t **get_input(char *msg, char **desc, int count, int height, int width) //intro message, field, descriptions, field count, field height, field width
@@ -113,6 +114,8 @@ CLEANUP:
 
 int show_menu(char **items, int sz, char *msg)
 {
+	mvprintw(1, 1, "time taken is :%f", time_taken);
+	refresh();
 	int x, y;
 	MENU *menu;
 	WINDOW *wmenu, *sub;
