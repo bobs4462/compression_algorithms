@@ -17,10 +17,12 @@ int main(int argc, char **argv)
 				kc += 1;
 			}
 		text[i] = 0;
-		encoder(text);
+		encoder_v2(text);
 		fclose(input);
 	}
 	else {
+		if(argv[1][2] == 'v')
+			vf = 1;
 		FILE *file_stream = fopen("output.txt", "r");	
 		decoder(file_stream);
 	}

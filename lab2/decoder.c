@@ -1,6 +1,6 @@
 #include <encoder.c>
 
-#define KILO 0x3E8
+int vf = 0;
 
 int verify (char *code, int controls, int codelen)
 {
@@ -19,16 +19,19 @@ int verify (char *code, int controls, int codelen)
 				jump += (p + 1);
 				block = p;
 			}
-		}
-
-		if ((code[p - 1] - ZERO) != controlled % 2) {
+		} 
+		if (controlled % 2) {
 			error = 1;
-			error_position += (p - 1);
+			error_position += p;
+			printf("ERROR POSTION %d\n", p);
 		}
 		controlled = 0;
 	}
-	if (error)
-		code[error_position] = (code[error_position] - ZERO) ? '0' : '1';
+	if (error) { 
+		printf("ERROR OCCURRED\n");
+		printf("FLIPPING BIT AT POSTION %d\n", error_position);
+		code[error_position - 1] = (code[error_position - 1] - ZERO) ? '0' : '1';
+	}
 
 }
 
@@ -47,15 +50,21 @@ int decoder(FILE *file_stream)
 			kc += 1;
 		}
 
-	code[i] = 0;
+	code[--i] = 0;
 	
-	int controls = 0, t = i;
+	
+	int controls = 0, t = i - 1;
 	
 	while (t / 2) {
 		++controls;
 		t /= 2;
 	}
-	verify(code, controls, i);
+	printf("CONTROLS %d\n", controls);
+	if (vf)
+		verify(code, controls, i);
+
+	FILE *test = fopen("testwhole.txt", "w");
+	fprintf(test, "%s", code);
 	
     for (int j = 0, k = 0; code[j]; ++j) {
 		if (is_power_of_two(j + 1)) {

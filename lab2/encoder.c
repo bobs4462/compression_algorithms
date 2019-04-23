@@ -5,6 +5,7 @@
 #define OCTET 0x8
 #define ZERO  0x30U
 #define ONE  0x31U
+#define KILO 0x3E8
 
 int raise_to_power_of_two(int power)
 {
@@ -52,17 +53,18 @@ int encoder(char *text)
 		bitcount /= 2;
 	}
 
-	int p = 0, jump = 0, controlled = 0, block = 0;
+	int p = 0, jump = 0, controlled = 0, block = 0, c;
 
 	for (int i = 0; i <= controls; ++i) {
-		rewind(out);
 		block = p = raise_to_power_of_two(i);
 		jump = p - 1;
 		while (fseek(out, jump, SEEK_SET)) {
-			if (fgetc(out) - ZERO)
-				if (feof(out))
+			if (c = (fgetc(out) - ZERO))
+				if (feof(out)) {
 					break;
-				else controlled += 1;
+				}
+				else if (c)
+					controlled += 1;
 			if (--block) 
 				jump += 1;
 			else {
@@ -71,6 +73,7 @@ int encoder(char *text)
 			}
 		}
 		clearerr(out);
+
 		fseek(out, p - 1, SEEK_SET);
 
 		if (controlled % 2)
@@ -80,4 +83,57 @@ int encoder(char *text)
 	fclose(out);
 }
 
+int encoder_v2(char *text)
+{
+	char *array = malloc(KILO);
+	int bitcount = 2;
+	int controls = 0;
+	FILE *out = fopen("output.txt", "w");
+	int i = 0, kc = 1; 
+	array[0] = array[1] = ZERO;
+
+
+	for (int i = 0; text[i]; ++i) {
+		for (int j = 0; j < OCTET; ++j) {
+			if (bitcount >= kc * KILO)
+				array = realloc(array, ++kc * KILO);
+			if (is_power_of_two(bitcount + 1)) {
+				array[bitcount] = ZERO;
+				++bitcount;
+			}
+			array[bitcount] = ((unsigned char)text[i] >> SHIFT) + ZERO;
+			text[i] = text[i] << 1;
+			++bitcount;
+		}
+	}
+	array[bitcount] = 0;
+
+	int t = bitcount;	
+	while (t / 2) {
+		++controls;
+		t /= 2;
+	}
+
+	int p = 0, jump = 0, controlled = 0, block = 0, c;
+
+	for (int i = 0; i <= controls; ++i) {
+		block = p = raise_to_power_of_two(i);
+		jump = p - 1;
+		while (jump < bitcount) {
+			if (array[jump] - ZERO)
+				controlled += 1;
+			if (--block) 
+				jump += 1;
+			else {
+				jump += (p + 1);
+				block = p;
+			}
+		}
+
+		if (controlled % 2)
+			array[p - 1] = ONE;
+		controlled = 0;
+	}
+	fprintf(out, "%s", array);
+}
 
